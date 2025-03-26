@@ -4,6 +4,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -64,9 +65,15 @@ public class LoginServlet extends HttpServlet {
 		if (username.equals("admin") && password.equals("123456")) {
 		    RequestDispatcher requestDispatcher= request.getRequestDispatcher("dashboard.jsp");
 		    requestDispatcher.forward(request, response);
+		    Cookie ckUsername= new Cookie("username", username);
+		    Cookie ckLoginDate= new Cookie("loginDate", System.currentTimeMillis() + "");
+		    
+		    response.addCookie(ckUsername);
+		    response.addCookie(ckLoginDate);
+		    response.sendRedirect("dasboard.jsp");
 		} else {
 		    RequestDispatcher requestDispatcher= request.getRequestDispatcher("error.jsp");
-		    requestDispatcher.include(request, response)
+		    requestDispatcher.include(request, response);
 		}
 	}
 
