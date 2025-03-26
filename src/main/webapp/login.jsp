@@ -29,7 +29,7 @@
     <div class="login-container">
         <h2 class="text-center mb-2">Shop Management</h2>
         <h3 class="text-center mb-4">Login</h3>
-        <form action="loginServlet" method="post">
+        <form action="login" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
