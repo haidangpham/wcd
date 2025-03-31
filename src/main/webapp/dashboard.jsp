@@ -68,6 +68,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="home.jsp">Home</a>
                     </li>
+                    <li class="nav-item">
+                        ${username} Login time ${loginDate}
+                    </li>
                     <!-- Thêm các menu khác nếu cần -->
                     <li class="nav-item">
                         <a class="nav-link" href="#">Products</a>

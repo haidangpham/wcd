@@ -8,6 +8,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -47,7 +49,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
 	}
 
 	/**
@@ -63,14 +65,22 @@ public class LoginServlet extends HttpServlet {
 		
 		//username= admin & password =123456
 		if (username.equals("admin") && password.equals("123456")) {
-		    RequestDispatcher requestDispatcher= request.getRequestDispatcher("dashboard.jsp");
-		    requestDispatcher.forward(request, response);
+//		    RequestDispatcher requestDispatcher= request.getRequestDispatcher("dashboard.jsp");
+//		    requestDispatcher.forward(request, response);
+		  //Cookies
 		    Cookie ckUsername= new Cookie("username", username);
 		    Cookie ckLoginDate= new Cookie("loginDate", System.currentTimeMillis() + "");
 		    
 		    response.addCookie(ckUsername);
 		    response.addCookie(ckLoginDate);
-		    response.sendRedirect("dasboard.jsp");
+		    
+		    
+		    //Session
+		    HttpSession session= request.getSession();
+		    session.setAttribute("username", username);
+		    session.setAttribute("loginDate", System.currentTimeMillis() + "");
+		    
+		    response.sendRedirect("dashboard.jsp");
 		} else {
 		    RequestDispatcher requestDispatcher= request.getRequestDispatcher("error.jsp");
 		    requestDispatcher.include(request, response);
