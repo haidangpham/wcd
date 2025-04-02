@@ -1,112 +1,74 @@
 package com.mytech.shopmanagement.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import com.mytech.shopmanagement.db.DbConnector;
 import com.mytech.shopmanagement.models.Product;
 
-//Data Access
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+
 public class ProductDao {
 
-	private final String SELECT_ALL_PRODUCT = "SELECT * FROM t3shop.products";
-	private final String GET_PRODUCT_BY_CODE = "SELECT * FROM products WHERE code= ?";
-	private final String INSERT_PRODUCT = "INSERT INTO products (code, name, imagePath)";
-
-	private final String UPDATE_PRODUCT_BY_CODE = "UPDATE products SET name= ?, price= ?, imagePath= ? WHERE code= ?";
-	private final String DELETE_PRODUCT_BY_CODE = "DELETE FROM products WHERE code= ?";
-
-	public ArrayList<Product> getProducts() {
-		ArrayList<Product> listProducts = new ArrayList<Product>();
-
-		Connection connection = DbConnector.getConnection();
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRODUCT);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				String code = resultSet.getString("code");
-				String name = resultSet.getString("name");
-				Double price = resultSet.getDouble("price");
-				String imagePath = resultSet.getString("imagePath");
-
-				Product product = new Product(code, name, price, imagePath);
-				listProducts.add(product);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return listProducts;
+	public List<Product> getProduct() {
+		EntityManager entityManager = DbConnector.getEntityManager();
+		Query query = entityManager.createNamedQuery("Product.findAll", Product.class);
+		return query.getResultList();
 	}
 
-	// Get Products
+	// GET PRODUCT ID
 	public Product getProductByCode(String code) {
-		Connection connection = DbConnector.getConnection();
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_BY_CODE);
-			preparedStatement.setString(1, code);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				String name = resultSet.getString("name");
-				Double price = resultSet.getDouble("price");
-				String imagePath = resultSet.getString("imagePath");
+		EntityManager entityManager = DbConnector.getEntityManager();
+		Query query = entityManager.createNamedQuery("Product.findByCode");
+		query.setParameter("code", code);
 
-				Product product = new Product(code, name, price, imagePath);
-				return product;
-			}
-		} catch (Exception e) {
-			System.out.println("getProductByCode::exception " + e.toString());
-		}
-		return null;
+		return (Product) query.getSingleResult();
 	}
 
-	// Update Product
-	public boolean updateProductByCode(Product product) {
-		Connection connection = DbConnector.getConnection();
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_BY_CODE);
-			preparedStatement.setString(1, product.getName());
-			preparedStatement.setDouble(2, product.getPrice());
-			preparedStatement.setString(3, product.getImagePath());
-			preparedStatement.setString(4, product.getCode());
-		} catch (Exception e) {
-			System.out.println("getProductByCode::exception " + e.toString());
-			return false;
-		}
+	// GET PRODUCT NAME
+	public Product getProductByName(String name) {
+		EntityManager entityManager = DbConnector.getEntityManager();
+		Query query = entityManager.createNamedQuery("Product.findByName");
+		query.setParameter("name", "%" + name + "%");
 
-		return true;
+		return (Product) query.getSingleResult();
 	}
-	
-	//Delete Product
-	public boolean deleteProductByCode(String code) {
-		Connection connection = DbConnector.getConnection();
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_BY_CODE);
-			preparedStatement.setString(1, code);
-			
-		} catch (Exception e) {
-			System.out.println("getProductByCode::exception " + e.toString());
-			return false;
-		}
-		return true;
-	}
-	
-	//Insert Product
+
+	// ADD PRODUCT
 	public boolean addProduct(Product product) {
-		Connection connection = DbConnector.getConnection();
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRODUCT);
-			preparedStatement.setString(1, product.getCode());
-			preparedStatement.setString(2, product.getName());
-			preparedStatement.setString(3, product.getImagePath());
-			preparedStatement.setDouble(4, product.getPrice());
-		} catch (Exception e) {
-			System.out.println("getProductByCode::exception " + e.toString());
-			return false;
+		EntityManager entityManager = DbConnector.getEntityManager();
+		var trans = entityManager.getTransaction();
+		trans.begin();
+		entityManager.persist(product);
+		trans.commit();
+		return true;
+	}
+
+	// UPDATE PRODUCT
+	public boolean updateProduct(Product product) {
+		EntityManager entityManager = DbConnector.getEntityManager();
+		var trans = entityManager.getTransaction();
+		trans.begin();
+
+		Product updProduct = entityManager.find(Product.class, product.getCode());
+		if (updProduct != null) {
+			updProduct.setName(product.getName());
+			updProduct.setPrice(product.getPrice());
+			updProduct.setImagePath(product.getImagePath());
+			entityManager.merge(updProduct);
 		}
 
+		trans.commit();
+
+		return true;
+	}
+
+	// DELETE PRODUCT
+	public boolean deleteProductByCode(Product code) {
+		EntityManager entityManager = DbConnector.getEntityManager();
+		Product delProduct = entityManager.find(Product.class, code);
+
+		entityManager.remove(delProduct);
 		return true;
 	}
 }

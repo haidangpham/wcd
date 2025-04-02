@@ -7,7 +7,7 @@
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="jakarta.persistence.jdbc.url"
-				value="jdbc:mysql://localhost:3306/t3shop?useSSL=false" />
+				value="jdbc:mysql://localhost:3306/t3shopjpa?useSSL=false" />
 			<property name="jakarta.persistence.jdbc.user"
 				value="admin" />
 			<property name="jakarta.persistence.jdbc.driver"
