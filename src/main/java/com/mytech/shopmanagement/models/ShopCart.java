@@ -1,5 +1,6 @@
 package com.mytech.shopmanagement.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -20,6 +21,10 @@ public class ShopCart {
 	Customer customer;
 	@OneToMany(mappedBy = "shopCart")
 	List<CartLine> cartLines;
+	
+	public ShopCart() {
+        this.cartLines = new ArrayList<>(); // 🔹 Khởi tạo danh sách rỗng ngay từ đầu
+    }
 	double total;
 
 	public Long getCartId() {
