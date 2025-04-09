@@ -14,7 +14,7 @@ public class ProductJDBCDao {
 
 	private final String SELECT_ALL_PRODUCT = "SELECT * FROM t3shop.products";
 	private final String GET_PRODUCT_BY_CODE = "SELECT * FROM products WHERE code= ?";
-	private final String INSERT_PRODUCT = "INSERT INTO products (code, name, imagePath)";
+	private final String INSERT_PRODUCT = "INSERT INTO products (code, name, imagePath, price) VALUES (?, ?, ?, ?)";
 
 	private final String UPDATE_PRODUCT_BY_CODE = "UPDATE products SET name= ?, price= ?, imagePath= ? WHERE code= ?";
 	private final String DELETE_PRODUCT_BY_CODE = "DELETE FROM products WHERE code= ?";
@@ -71,26 +71,27 @@ public class ProductJDBCDao {
 			preparedStatement.setDouble(2, product.getPrice());
 			preparedStatement.setString(3, product.getImagePath());
 			preparedStatement.setString(4, product.getCode());
+			int rows = preparedStatement.executeUpdate();
+			return rows > 0;
 		} catch (Exception e) {
 			System.out.println("getProductByCode::exception " + e.toString());
 			return false;
 		}
-
-		return true;
+		
 	}
 	
 	//Delete Product
 	public boolean deleteProductByCode(String code) {
 		Connection connection = DbConnector.getConnection();
 		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_BY_CODE);
+			PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PRODUCT_BY_CODE);
 			preparedStatement.setString(1, code);
-			
+			int rows = preparedStatement.executeUpdate();
+			return rows > 0;
 		} catch (Exception e) {
 			System.out.println("getProductByCode::exception " + e.toString());
 			return false;
 		}
-		return true;
 	}
 	
 	//Insert Product
