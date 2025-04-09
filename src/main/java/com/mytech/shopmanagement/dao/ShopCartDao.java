@@ -40,10 +40,10 @@ public class ShopCartDao {
             // 🔹 2. Kiểm tra nếu sản phẩm đã có trong giỏ hàng
             CartLine existingCartLine = null;
             for (CartLine cl : shopCart.getCartLines()) {
-                if (cl.getProduct().getProductCode().equals(product.getProductCode())) {
-                    existingCartLine = cl;
-                    break;
-                }
+//                if (cl.getProduct().getProductCode().equals(product.getProductCode())) {
+//                    existingCartLine = cl;
+//                    break;
+//                }
             }
 
             if (existingCartLine != null) {
